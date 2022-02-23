@@ -1,3 +1,5 @@
+FROM redislabs/redisearch:2.0.6 as redisearch
+
 FROM alpine:3.9 as builder
 
 MAINTAINER Opstree Solutions
@@ -10,7 +12,9 @@ ARG REDIS_DOWNLOAD_URL="http://download.redis.io/"
 
 ARG REDIS_VERSION="stable"
 
-RUN apk add --no-cache su-exec tzdata make curl build-base linux-headers bash openssl-dev
+RUN apk add --no-cache su-exec tzdata git make curl build-base linux-headers bash openssl-dev
+
+COPY --from=redisearch /usr/lib/redis/modules/redisearch.so /usr/lib/redis/modules/redisearch.so
 
 RUN curl -fL -Lo /tmp/redis-${REDIS_VERSION}.tar.gz ${REDIS_DOWNLOAD_URL}/redis-${REDIS_VERSION}.tar.gz && \
     cd /tmp && \
@@ -32,6 +36,7 @@ LABEL VERSION=1.0 \
 COPY --from=builder /usr/local/bin/redis-server /usr/local/bin/redis-server
 COPY --from=builder /usr/local/bin/redis-cli /usr/local/bin/redis-cli
 COPY --from=builder /etc/redis /etc/redis
+COPY --from=builder /data/RediSearch-master/build/redisearch.so /opt/redisearch.so
 
 RUN addgroup -S -g 1001 redis && adduser -S -G redis -u 1001 redis && \
     apk add --no-cache bash

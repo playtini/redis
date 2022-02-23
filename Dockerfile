@@ -36,7 +36,7 @@ LABEL VERSION=1.0 \
 COPY --from=builder /usr/local/bin/redis-server /usr/local/bin/redis-server
 COPY --from=builder /usr/local/bin/redis-cli /usr/local/bin/redis-cli
 COPY --from=builder /etc/redis /etc/redis
-COPY --from=builder /data/RediSearch-master/build/redisearch.so /opt/redisearch.so
+COPY --from=redisearch /data/RediSearch-master/build/redisearch.so /opt/redisearch.so
 
 RUN addgroup -S -g 1001 redis && adduser -S -G redis -u 1001 redis && \
     apk add --no-cache bash

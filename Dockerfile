@@ -14,8 +14,6 @@ ARG REDIS_VERSION="stable"
 
 RUN apk add --no-cache su-exec tzdata git make curl build-base linux-headers bash openssl-dev
 
-COPY --from=redisearch /usr/lib/redis/modules/redisearch.so /usr/lib/redis/modules/redisearch.so
-
 RUN curl -fL -Lo /tmp/redis-${REDIS_VERSION}.tar.gz ${REDIS_DOWNLOAD_URL}/redis-${REDIS_VERSION}.tar.gz && \
     cd /tmp && \
     tar xvzf redis-${REDIS_VERSION}.tar.gz && \
@@ -36,7 +34,7 @@ LABEL VERSION=1.0 \
 COPY --from=builder /usr/local/bin/redis-server /usr/local/bin/redis-server
 COPY --from=builder /usr/local/bin/redis-cli /usr/local/bin/redis-cli
 COPY --from=builder /etc/redis /etc/redis
-COPY --from=redisearch /data/RediSearch-master/build/redisearch.so /opt/redisearch.so
+COPY --from=redisearch /usr/lib/redis/modules/redisearch.so /usr/lib/redis/modules/redisearch.so
 
 RUN addgroup -S -g 1001 redis && adduser -S -G redis -u 1001 redis && \
     apk add --no-cache bash

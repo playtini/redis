@@ -1,4 +1,4 @@
-FROM redislabs/redisearch:2.0.6 as redisearch
+FROM redislabs/redisearch:2.0.15 as redisearch
 
 FROM alpine:3.9 as builder
 
